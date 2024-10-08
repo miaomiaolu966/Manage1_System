@@ -3,8 +3,10 @@ package model;
 import javax.xml.crypto.Data;
 import java.util.Date;
 
+import static util.DataStore.DB_DIR;
+
 //
-public class Menu {
+public class Menu implements SerializableObject{
     private String Id;
     private String Name;
     private String Order;
@@ -78,5 +80,15 @@ public class Menu {
                 ", CreateTime=" + CreateTime +
                 ", ModifyTime=" + ModifyTime +
                 '}';
+    }
+
+    @Override
+    public String getIdentifier() {
+        return getName(); // 假设 getName() 返回唯一标识符
+    }
+
+    @Override
+    public String getDBDir() {
+        return DB_DIR; // 用户数据的目录
     }
 }

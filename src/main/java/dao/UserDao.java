@@ -1,17 +1,14 @@
-package dao;
+package dao;//dao包
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import model.User;
 import util.DataStore;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import javax.swing.*;
+import java.util.*;
 
-import static util.DataStore.DB_DIR;
-import static util.DataStore.saveObjectToFile;
+import static util.DataStore.*;
+//import static util.DataStore.saveObjectToFile;
 
 public class UserDao {
     public static boolean add(User user) {//添加用户
@@ -48,8 +45,10 @@ public class UserDao {
 
         return true;
     }
-    public boolean view(User user){//更改用户
+    public static boolean view(String name){//更改用户
         DataStore Ds = new DataStore();
+
+        Ds.view(User.class,name);
 
         return true;
     }

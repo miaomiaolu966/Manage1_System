@@ -1,6 +1,6 @@
 package view;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dao.UserDao;
 import model.User;
@@ -105,18 +105,37 @@ public class UserForm extends JFrame {
             return;
         }
 
-        String del_filename =fileListModel.getElementAt(selectedIndex);
+        String filename =fileListModel.getElementAt(selectedIndex);
 
-        UserDao.del(del_filename);
+        UserDao.del(filename);
         //System.out.println("删除用户被点击");
 
         updateFileList();
     }
 
     private void viewUser(){
+        int selectedIndex = fileList.getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "请选择一个用户文件", "提示", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String filename =fileListModel.getElementAt(selectedIndex);
+
+        UserDao.view(filename);
+
         System.out.println("查看用户被点击");
     }
     private void changeUser(){
+        int selectedIndex = fileList.getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "请选择一个用户文件", "提示", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        new ChangeForm<>();
         System.out.println("修改用户被点击");
     }
 

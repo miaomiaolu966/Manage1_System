@@ -3,7 +3,9 @@ package model;
 import javax.xml.crypto.Data;
 import java.util.Date;
 
-public class User {
+import static util.DataStore.DB_DIR;
+
+public class User implements SerializableObject{
     private String Id;
     private String Account;
     private String Name;
@@ -99,5 +101,13 @@ public class User {
                 ", CreateTime=" + CreateTime +
                 ", ModifyTime=" + ModifyTime +
                 '}';
+    }
+    @Override
+    public String getIdentifier() {
+        return getName(); // 假设 getName() 返回唯一标识符
+    }
+    @Override
+    public String getDBDir() {
+        return DB_DIR; // 用户数据的目录
     }
 }

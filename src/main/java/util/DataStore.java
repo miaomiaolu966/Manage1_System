@@ -1,5 +1,6 @@
 package util;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,9 +14,12 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import model.SerializableObject;
 import model.User;
 
-public class DataStore {
+import javax.swing.*;
+
+public class DataStore extends Component {
     public static final String DB_DIR = "src/main/resources/db";
 
     private final static Map<String, List<Object>> dbData= new HashMap<>()     {{
@@ -37,6 +41,28 @@ public class DataStore {
 
 
         saveObjectToFile(classList,className,DB_DIR);
+
+        return true;
+    }
+    public boolean view(Class clazz,String name){
+        String className = clazz.getSimpleName();
+
+        List<Object> classlist=  dbData.get(className);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Iterator<Object> iterator = classlist.iterator();//迭代器
+        while (iterator.hasNext()) {
+            Object obj = iterator.next();
+            String jsonString = gson.toJson(obj); // 将对象转换为JSON字符串
+            User user = gson.fromJson(jsonString, User.class);
+            if (user.getAccount().equals(name)) {
+                //iterator.remove();  // 使用迭代器的 remove 方法
+                JOptionPane.showMessageDialog(this, user.toString(), "提示", JOptionPane.INFORMATION_MESSAGE);
+                // 可选：打印或执行其他操作
+                //System.out.println("已删除用户 " + name);
+            }
+        }
 
         return true;
     }
@@ -64,7 +90,55 @@ public class DataStore {
             e.printStackTrace();
         }
     }
+    public static void saveObjectToFile(SerializableObject obj) {//saveObjectToFile方法重载
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(obj);
+        String fileName = obj.getIdentifier() + ".json";
+        String dbDir = obj.getDBDir();
+        String filePath = dbDir + File.separator + fileName;
 
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static <T> T loadObjectFromFile(String fileName, Class<T> clazz) {
+        String className = clazz.getSimpleName();
+
+        List<Object> classlist = dbData.get(className);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Iterator<Object> iterator = classlist.iterator();//迭代器
+
+        while (iterator.hasNext()) {
+
+            Object obj = iterator.next();
+
+            String jsonString = gson.toJson(obj); // 将对象转换为JSON字符串
+
+            Class<T> clazz_0 = gson.fromJson(jsonString, Class.class);
+
+            Object filename =fileName;
+            if (clazz_0.getAccount().equals(filename)) {
+                //iterator.remove();  // 使用迭代器的 remove 方法
+                //JOptionPane.showMessageDialog(this, user.toString(), "提示", JOptionPane.INFORMATION_MESSAGE);
+                // 可选：打印或执行其他操作
+                //System.out.println("已删除用户 " + name);
+            }
+        }
+
+        try (Reader reader = classlist.get()) {
+
+            return gson.fromJson(reader, clazz);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        return null;
+    }
     public static <T> T loadObjectFromFile(String fileName, Class<T> clazz, String DB_DIR) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (Reader reader = Files.newBufferedReader(Paths.get(DB_DIR + "/" + fileName))) {
