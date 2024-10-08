@@ -17,6 +17,16 @@ public class UserDao {
         Ds.delete(user,User.class,del_name);
         return true;
     }
+    public boolean change(User user){//更改用户
+        DataStore Ds = new DataStore();
+
+        return true;
+    }
+    public boolean view(User user){//更改用户
+        DataStore Ds = new DataStore();
+
+        return true;
+    }
     //public boolean up();
     public static void main(String[] args) {
         User user = new User(

@@ -1,15 +1,15 @@
 package view;
 
+import dao.UserDao;
+import model.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Date;
 
-import dao.UserDao;
-import model.User;
-
 public class UserForm extends JFrame {
-    public UserForm(){//构造方法
+    public UserForm(){
         setTitle("用户界面");
         setSize(600,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,9 +17,7 @@ public class UserForm extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());//创建主面板
 
         JPanel buttonPanel = new JPanel(new FlowLayout()){{//创建按钮面板
-
             String [] buttonLabels ={"添加用户","删除用户","修改用户","刷新列表","查看菜单"};
-
             // 创建内部匿名类数组，每个类对应按钮的ActionListener
             ActionListener[] actionListeners = new ActionListener[buttonLabels.length];
 
@@ -61,7 +59,7 @@ public class UserForm extends JFrame {
         try {
             User user = new User(User_atrs[0],User_atrs[1],User_atrs[2],User_atrs[3],Integer.parseInt(User_atrs[4]),User_atrs[5],new Date());
 
-            //s数据写入json
+            //数据写入json
             UserDao.add(user);
 
             JOptionPane.showMessageDialog(this,"用户添加成功","提示",JOptionPane.INFORMATION_MESSAGE);
@@ -72,7 +70,9 @@ public class UserForm extends JFrame {
     }
 
     private void delUser(){
+
         System.out.println("删除用户被点击");
+
     }
 
     private void viewUser(){
