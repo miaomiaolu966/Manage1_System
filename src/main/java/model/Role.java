@@ -1,6 +1,5 @@
 package model;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 
 import static util.DataStore.DB_DIR;
@@ -12,11 +11,12 @@ public class Role implements SerializableObject{
     private Date CreateTime;
     private Date ModifyTime;
 
-    public Role(String order, String id, String name, Date createTime) {
+    public Role(String id,String name,String order,   Date createTime,Date modifyTime) {
         Order = order;
         Id = id;
         Name = name;
         CreateTime = createTime;
+        ModifyTime = modifyTime;
     }
 
     public String getId() {
@@ -74,8 +74,4 @@ public class Role implements SerializableObject{
         return getName(); // 假设 getName() 返回唯一标识符
     }
 
-    @Override
-    public String getDBDir() {
-        return DB_DIR; // 用户数据的目录
-    }
 }

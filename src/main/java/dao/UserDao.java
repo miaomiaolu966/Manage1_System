@@ -3,21 +3,17 @@ package dao;//dao包
 import com.google.gson.*;
 import model.User;
 import util.DataStore;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-
 import static util.DataStore.*;
-//import static util.DataStore.saveObjectToFile;
+
 
 public class UserDao extends Component {
 
     static String className = User.class.getSimpleName();
-
     static List<Object> classList=  new DataStore().GetMap().get(className);
-
     public static List<User> userList = convertList(classList);
     private static List<User> convertList(List<Object> objectList) {
         List<User> userList = new ArrayList<>();
@@ -70,7 +66,7 @@ public class UserDao extends Component {
         }
         return null;
     }
-    public static boolean view(String name){//更改用户
+    public static boolean view(String name){//查看用户
 
         //Ds.view(User.class,name);
         Iterator<User> iterator = userList.iterator();//迭代器
@@ -98,6 +94,7 @@ public class UserDao extends Component {
                 "男",
                 10,
                 "123456",
+                new Date(),
                 new Date()
         );
         UserDao userDao_test =new UserDao(){{

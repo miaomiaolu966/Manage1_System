@@ -18,10 +18,10 @@ import java.util.List;
 import static util.DataStore.DB_DIR;
 
 public class UserForm extends JFrame {
-    public JList<String> fileList;
+    private JList<String> fileList;
     private DefaultListModel<String> fileListModel;
 
-    public UserForm(){
+    public UserForm(){//构造函数
         setTitle("用户界面");
         setSize(600,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,7 +85,7 @@ public class UserForm extends JFrame {
         }
 
         try {
-            User user = new User(User_atrs[0],User_atrs[1],User_atrs[2],User_atrs[3],Integer.parseInt(User_atrs[4]),User_atrs[5],new Date());
+            User user = new User(User_atrs[0],User_atrs[1],User_atrs[2],User_atrs[3],Integer.parseInt(User_atrs[4]),User_atrs[5],new Date(),new Date());
 
             //数据写入json
             UserDao.add(user);
@@ -106,6 +106,7 @@ public class UserForm extends JFrame {
         }
 
         String filename =fileListModel.getElementAt(selectedIndex);
+
 
         UserDao.del(filename);
         //System.out.println("删除用户被点击");
@@ -139,7 +140,7 @@ public class UserForm extends JFrame {
 
         User user =UserDao.change(filename);
 
-        //new ChangeForm<>();
+        new ChangeForm(user);
         
         System.out.println("修改用户被点击");
     }
@@ -147,7 +148,7 @@ public class UserForm extends JFrame {
     private void updateFileList(){
 
         try {
-            Path path = Paths.get(DB_DIR, "user.json");
+            Path path = Paths.get(DB_DIR, "User.json");
             String content = new String(Files.readAllBytes(path));
             Gson gson = new Gson();
             java.util.List<User> users = gson.fromJson(content, new TypeToken<List<User>>() {}.getType());

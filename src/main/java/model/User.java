@@ -15,7 +15,7 @@ public class User implements SerializableObject{
     private Date CreateTime;
     private Date ModifyTime;
     //构造方法，初始化时就赋值
-    public User(String id, String account, String name, String sex, int age, String passWord, Date createTime) {
+    public User(String id, String account, String name, String sex, int age, String passWord, Date createTime,Date modifyTime) {
         Id = id;
         Account = account;
         Name = name;
@@ -23,6 +23,7 @@ public class User implements SerializableObject{
         Age = age;
         PassWord = passWord;
         CreateTime = createTime;
+        ModifyTime = modifyTime;
     }
 
     public String getId() {
@@ -105,9 +106,5 @@ public class User implements SerializableObject{
     @Override
     public String getIdentifier() {
         return getName(); // 假设 getName() 返回唯一标识符
-    }
-    @Override
-    public String getDBDir() {
-        return DB_DIR; // 用户数据的目录
     }
 }

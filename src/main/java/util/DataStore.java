@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -90,38 +91,35 @@ public class DataStore extends Component {
             e.printStackTrace();
         }
     }
-    public static void saveObjectToFile(SerializableObject obj) {//saveObjectToFile方法重载
+    public static void saveObjectToFile(SerializableObject obj,Class clazz) {//saveObjectToFile方法重载
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(obj);
-        String fileName = obj.getIdentifier() + ".json";
-        String dbDir = obj.getDBDir();
-        String filePath = dbDir + File.separator + fileName;
 
-        try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
+        String json = gson.toJson(obj);
+
+        // 使用 TypeToken 处理泛型问题
+        Type objectType = new TypeToken<SerializableObject>() {}.getType();
+        SerializableObject newobj = gson.fromJson(json, (Type) clazz);
+        String className = clazz.getSimpleName();
+
+        List<Object> classList=  dbData.get(className);
+
+
+        Iterator<Object> iterator = classList.iterator();//迭代器
+        while (iterator.hasNext()) {
+
+            String jsonString = gson.toJson(iterator.next());
+            SerializableObject user_obj = gson.fromJson(jsonString, (Type) clazz);
+
+            if (user_obj.getIdentifier().equals(newobj.getIdentifier())) {
+                iterator.remove();
+                classList.add(newobj);
+
+                saveObjectToFile(classList,className,DB_DIR);
+                return;
+            }
         }
     }
-//    public static <T> T loadObjectFromFile(String fileName, Class<T> clazz) {
-//        String className = clazz.getSimpleName();
-//
-//        List<Object> classlist = dbData.get(className);
-//
-//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//
-//
-//
-//        try (Reader reader = classlist.get()) {
-//
-//            return gson.fromJson(reader, clazz);
-//
-//        } catch (IOException e) {
-//
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+
     public static <T> T loadObjectFromFile(String fileName, Class<T> clazz, String DB_DIR) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (Reader reader = Files.newBufferedReader(Paths.get(DB_DIR + "/" + fileName))) {

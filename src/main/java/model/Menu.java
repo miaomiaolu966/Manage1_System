@@ -1,6 +1,5 @@
 package model;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 
 import static util.DataStore.DB_DIR;
@@ -14,12 +13,13 @@ public class Menu implements SerializableObject{
     private Date CreateTime;
     private Date ModifyTime;
 
-    public Menu(String id, String name, String order, String page_path, Date createTime) {
+    public Menu(String id, String name, String order, String page_path, Date createTime,Date modifyTime) {
         Id = id;
         Name = name;
         Order = order;
         Page_path = page_path;
         CreateTime = createTime;
+        ModifyTime = modifyTime;
     }
 
     public String getId() {
@@ -84,11 +84,6 @@ public class Menu implements SerializableObject{
 
     @Override
     public String getIdentifier() {
-        return getName(); // 假设 getName() 返回唯一标识符
-    }
-
-    @Override
-    public String getDBDir() {
-        return DB_DIR; // 用户数据的目录
+        return getId(); // 假设 getName() 返回唯一标识符
     }
 }

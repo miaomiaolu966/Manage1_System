@@ -1,28 +1,34 @@
 package view;
 
+import model.SerializableObject;
+import model.User;
+
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Method;
 
 import static util.DataStore.saveObjectToFile;
 
-public class ChangeForm extends JFrame {
-    //private T object;
+public class ChangeForm<T> extends JFrame {
+    private T object;
 
-    public ChangeForm(){
-        //this.object = obj;
+    public ChangeForm(T obj){
+        this.object = obj;
         setTitle("修改数据");
         setSize(600, 300);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel(){{
+            setLayout(new BorderLayout());
+        }};
 
-        JPanel StringPanel = new JPanel();
-        StringPanel.setLayout(new BorderLayout());
+        JPanel StringPanel = new JPanel(){{
+            setLayout(new BorderLayout());
+        }};
 
         // 创建文本区域并允许编辑
         JTextArea textArea = new JTextArea();
-        //textArea.setText(obj.toString());
+        textArea.setText(obj.toString());
         textArea.setEditable(false); // 允许编辑
         textArea.setBackground(Color.WHITE); // 设置背景颜色为白色
 
@@ -32,20 +38,21 @@ public class ChangeForm extends JFrame {
 
 
         // 创建按钮面板
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
+        JPanel buttonPanel = new JPanel(){{
+            setLayout(new FlowLayout());
+        }};
 
-//        // 动态生成按钮
-//        for (Method method : obj.getClass().getMethods()) {
-//            if (method.getName().startsWith("set")) {
-//                if (method.getName().equals("setCreateTime")) {
-//                    continue;  // 跳过此迭代
-//                }
-//                JButton button = new JButton("修改" + method.getName().substring(3));
-//                button.addActionListener(e -> modifyProperty(method));
-//                buttonPanel.add(button);
-//            }
-//        }
+        // 动态生成按钮
+        for (Method method : obj.getClass().getMethods()) {
+            if (method.getName().startsWith("set")) {
+                if (method.getName().equals("setCreateTime")) {
+                    continue;  // 跳过此迭代
+                }
+                JButton button = new JButton("修改" + method.getName().substring(3));
+                button.addActionListener(e -> modifyProperty(method));
+                buttonPanel.add(button);
+            }
+        }
 
         // 将按钮面板和文件列表面板添加到主面板
         mainPanel.add(buttonPanel, BorderLayout.NORTH);
@@ -55,8 +62,38 @@ public class ChangeForm extends JFrame {
         setVisible(true);
     }
 
+    private void modifyProperty(Method setter) {
+        String input = JOptionPane.showInputDialog(this, "请输入新值:");
+        if (input == null || input.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "输入不能为空", "错误", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            Method getter = object.getClass().getMethod("get" + setter.getName().substring(3));
+            Object currentValue = getter.invoke(object);
+            if (currentValue instanceof Integer) {
+                int newValue = Integer.parseInt(input);
+                setter.invoke(object, newValue);
+            } else if (currentValue instanceof String) {
+                setter.invoke(object, input);
+            } else {
+                JOptionPane.showMessageDialog(this, "不支持的数据类型", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+
+            // 将用户信息写入 JSON 文件
+            saveObjectToFile((SerializableObject) object, object.getClass());
+
+
+            JOptionPane.showMessageDialog(this, "数据修改成功", "提示", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "出错了，请重试", "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     public static void main(String[] args) {
 
-        new ChangeForm();
+        //new ChangeForm();
     }
 }
