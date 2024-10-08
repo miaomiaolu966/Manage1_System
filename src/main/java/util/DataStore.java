@@ -29,7 +29,7 @@ public class DataStore extends Component {
                 put(file.getName().replace(".json",""),loadListFromFile(file.getName(), Object.class,DB_DIR));
             }
         }};
-    public static Map<String, List<Object>> GetMap(){
+    public Map<String, List<Object>> GetMap(){
         return dbData;
     }
     public boolean add(Object obj, Class clazz) {
@@ -103,42 +103,25 @@ public class DataStore extends Component {
             e.printStackTrace();
         }
     }
-    public static <T> T loadObjectFromFile(String fileName, Class<T> clazz) {
-        String className = clazz.getSimpleName();
-
-        List<Object> classlist = dbData.get(className);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        Iterator<Object> iterator = classlist.iterator();//迭代器
-
-        while (iterator.hasNext()) {
-
-            Object obj = iterator.next();
-
-            String jsonString = gson.toJson(obj); // 将对象转换为JSON字符串
-
-            Class<T> clazz_0 = gson.fromJson(jsonString, Class.class);
-
-            Object filename =fileName;
-            if (clazz_0.getAccount().equals(filename)) {
-                //iterator.remove();  // 使用迭代器的 remove 方法
-                //JOptionPane.showMessageDialog(this, user.toString(), "提示", JOptionPane.INFORMATION_MESSAGE);
-                // 可选：打印或执行其他操作
-                //System.out.println("已删除用户 " + name);
-            }
-        }
-
-        try (Reader reader = classlist.get()) {
-
-            return gson.fromJson(reader, clazz);
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    public static <T> T loadObjectFromFile(String fileName, Class<T> clazz) {
+//        String className = clazz.getSimpleName();
+//
+//        List<Object> classlist = dbData.get(className);
+//
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//
+//
+//
+//        try (Reader reader = classlist.get()) {
+//
+//            return gson.fromJson(reader, clazz);
+//
+//        } catch (IOException e) {
+//
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
     public static <T> T loadObjectFromFile(String fileName, Class<T> clazz, String DB_DIR) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (Reader reader = Files.newBufferedReader(Paths.get(DB_DIR + "/" + fileName))) {

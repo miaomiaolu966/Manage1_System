@@ -125,7 +125,7 @@ public class UserForm extends JFrame {
 
         UserDao.view(filename);
 
-        System.out.println("查看用户被点击");
+        //System.out.println("查看用户被点击");
     }
     private void changeUser(){
         int selectedIndex = fileList.getSelectedIndex();
@@ -135,7 +135,12 @@ public class UserForm extends JFrame {
             return;
         }
 
-        new ChangeForm<>();
+        String filename =fileListModel.getElementAt(selectedIndex);
+
+        User user =UserDao.change(filename);
+
+        //new ChangeForm<>();
+        
         System.out.println("修改用户被点击");
     }
 

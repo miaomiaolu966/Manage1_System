@@ -28,16 +28,16 @@ public class MenuDao {
         return true;
     }
     public static void main(String[] args) {
-        Menu menu = new Menu(
-                "45647d",
-                "主页面",
-                "4564",
-                "www.baidu.com",
-                new Date()
-        );
-        DataStore Ds =new DataStore(){{
-            add(menu,Menu.class);
-        }};
-
+//        Menu menu = new Menu(
+//                "45647d",
+//                "主页面",
+//                "4564",
+//                "www.baidu.com",
+//                new Date()
+//        );
+//        DataStore Ds =new DataStore(){{
+//            add(menu,Menu.class);
+//        }};
+        System.out.println("1");
     }
 }

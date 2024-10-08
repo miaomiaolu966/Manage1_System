@@ -5,30 +5,48 @@ import model.User;
 import util.DataStore;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static util.DataStore.*;
 //import static util.DataStore.saveObjectToFile;
 
-public class UserDao {
+public class UserDao extends Component {
+
+    static String className = User.class.getSimpleName();
+
+    static List<Object> classList=  new DataStore().GetMap().get(className);
+
+    public static List<User> userList = convertList(classList);
+    private static List<User> convertList(List<Object> objectList) {
+        List<User> userList = new ArrayList<>();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        for (Object obj : objectList) {
+            String jsonString = gson.toJson(obj);
+            User user = gson.fromJson(jsonString, User.class);
+            userList.add(user);
+        }
+
+        return userList;
+    }
     public static boolean add(User user) {//添加用户
-        DataStore Ds = new DataStore();
-        Ds.add(user, User.class);
+
+        userList.add(user);
+
+        saveObjectToFile(userList,className,DB_DIR);
+
         return true;
     }
     //public boolean select();
     public static boolean del(String del_name){//删除用户
-        DataStore Ds = new DataStore();
 
-        List<Object> classlist =Ds.delete(User.class,del_name);
-        int length = classlist.size();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        Iterator<Object> iterator = classlist.iterator();//迭代器
+        Iterator<User> iterator = userList.iterator();//迭代器
         while (iterator.hasNext()) {
-            Object obj = iterator.next();
-            String jsonString = gson.toJson(obj); // 将对象转换为JSON字符串
-            User user = gson.fromJson(jsonString, User.class);
+
+            User user = iterator.next();
+
             if (user.getAccount().equals(del_name)) {
                 iterator.remove();  // 使用迭代器的 remove 方法
 
@@ -36,23 +54,42 @@ public class UserDao {
                 System.out.println("已删除用户 " + del_name);
             }
         }
-        saveObjectToFile(classlist,User.class.getSimpleName(),DB_DIR);
-        //System.out.println(del_name);
+        saveObjectToFile(userList,className,DB_DIR);
         return true;
     }
-    public boolean change(User user){//更改用户
-        DataStore Ds = new DataStore();
+    public static User change(String name){//更改用户
+        Iterator<User> iterator = userList.iterator();//迭代器
+        while (iterator.hasNext()) {
 
-        return true;
+            User user = iterator.next();
+
+            if (user.getAccount().equals(name)) {
+                return user;  // 使用迭代器的 remove 方法
+
+            }
+        }
+        return null;
     }
     public static boolean view(String name){//更改用户
-        DataStore Ds = new DataStore();
 
-        Ds.view(User.class,name);
+        //Ds.view(User.class,name);
+        Iterator<User> iterator = userList.iterator();//迭代器
+        while (iterator.hasNext()) {
 
+            User user = iterator.next();
+
+            if (user.getAccount().equals(name)) {
+                displayUser(user);
+                // 可选：打印或执行其他操作
+            }
+        }
         return true;
     }
     //public boolean up();
+    public static void displayUser(User user) {
+        // 创建一个匿名对象作为父组件（如果需要的话）
+        JOptionPane.showMessageDialog(new JFrame(), user.toString(), "提示", JOptionPane.INFORMATION_MESSAGE);
+    }
     public static void main(String[] args) {
         User user = new User(
                 "7516584",
