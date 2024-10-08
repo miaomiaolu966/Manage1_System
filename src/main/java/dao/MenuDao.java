@@ -1,7 +1,6 @@
 package dao;
 
 import model.Menu;
-import model.User;
 import util.DataStore;
 
 import java.util.Date;
@@ -13,6 +12,21 @@ public class MenuDao {
         return true;
     }
 
+    public boolean del(Menu menu, String del_name){//删除用户
+        DataStore Ds = new DataStore();
+        //Ds.delete(Menu.class);
+        return true;
+    }
+    public boolean change(Menu menu){//更改用户
+        DataStore Ds = new DataStore();
+
+        return true;
+    }
+    public boolean view(Menu menu){//更改用户
+        DataStore Ds = new DataStore();
+
+        return true;
+    }
     public static void main(String[] args) {
         Menu menu = new Menu(
                 "45647d",

@@ -1,15 +1,27 @@
 package view;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.Date;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import dao.UserDao;
 import model.User;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+
+import static util.DataStore.DB_DIR;
+
 public class UserForm extends JFrame {
-    public UserForm(){//构造方法
+    public JList<String> fileList;
+    private DefaultListModel<String> fileListModel;
+
+    public UserForm(){
         setTitle("用户界面");
         setSize(600,400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,16 +29,14 @@ public class UserForm extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());//创建主面板
 
         JPanel buttonPanel = new JPanel(new FlowLayout()){{//创建按钮面板
-
-            String [] buttonLabels ={"添加用户","删除用户","修改用户","刷新列表","查看菜单"};
-
+            String [] buttonLabels ={"添加用户","删除用户","修改用户","刷新列表","查看用户"};
             // 创建内部匿名类数组，每个类对应按钮的ActionListener
             ActionListener[] actionListeners = new ActionListener[buttonLabels.length];
 
             actionListeners[0] = e -> addUser();
             actionListeners[1] = e -> delUser();
             actionListeners[2] = e -> changeUser();
-            actionListeners[3] = e -> System.out.println("刷新列表被点击");
+            actionListeners[3] = e -> updateFileList();
             actionListeners[4] = e -> viewUser();
 
             for (int i = 0;i<buttonLabels.length;i++){
@@ -38,10 +48,26 @@ public class UserForm extends JFrame {
             }
         }};
 
-        mainPanel.add(buttonPanel);
+        //mainPanel.add(buttonPanel);
+
+        //创建文件列表面板
+        JPanel fileListPanel = new JPanel();
+        fileListPanel.setLayout(new BorderLayout());
+        //fileListPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5)); // 可选：增加边距
+
+        fileListModel =new DefaultListModel<>();
+        fileList = new JList<>(fileListModel);
+        fileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(fileList);
+        fileListPanel.add(scrollPane, BorderLayout.CENTER);
+
+        mainPanel.add(buttonPanel, BorderLayout.NORTH);
+        mainPanel.add(fileListPanel,BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);
+        updateFileList();
 
     }
     private void addUser(){//“添加用户”按钮触发的操作方法
@@ -61,7 +87,7 @@ public class UserForm extends JFrame {
         try {
             User user = new User(User_atrs[0],User_atrs[1],User_atrs[2],User_atrs[3],Integer.parseInt(User_atrs[4]),User_atrs[5],new Date());
 
-            //s数据写入json
+            //数据写入json
             UserDao.add(user);
 
             JOptionPane.showMessageDialog(this,"用户添加成功","提示",JOptionPane.INFORMATION_MESSAGE);
@@ -72,7 +98,19 @@ public class UserForm extends JFrame {
     }
 
     private void delUser(){
-        System.out.println("删除用户被点击");
+        int selectedIndex = fileList.getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "请选择一个用户文件", "提示", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String del_filename =fileListModel.getElementAt(selectedIndex);
+
+        UserDao.del(del_filename);
+        //System.out.println("删除用户被点击");
+
+        updateFileList();
     }
 
     private void viewUser(){
@@ -80,6 +118,30 @@ public class UserForm extends JFrame {
     }
     private void changeUser(){
         System.out.println("修改用户被点击");
+    }
+
+    private void updateFileList(){
+
+        try {
+            Path path = Paths.get(DB_DIR, "user.json");
+            String content = new String(Files.readAllBytes(path));
+            Gson gson = new Gson();
+            java.util.List<User> users = gson.fromJson(content, new TypeToken<List<User>>() {}.getType());
+            fileListModel.clear();
+            for (User user : users) {
+                fileListModel.addElement(user.getAccount());
+            }
+        } catch (IOException e) {
+            // 处理文件读取异常
+            e.printStackTrace();
+            // 可以在这里记录日志或显示错误信息
+            System.err.println("Error reading file: " + e.getMessage());
+        } catch (Exception e) {
+            // 处理其他异常
+            e.printStackTrace();
+            // 可以在这里记录日志或显示错误信息
+            System.err.println("Error updating file list: " + e.getMessage());
+        }
     }
     public static void main(String[] args) {
         new UserForm();

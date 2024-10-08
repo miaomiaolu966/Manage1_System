@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.google.gson.Gson;
@@ -40,16 +41,16 @@ public class DataStore {
         return true;
     }
 
-    public boolean delete(Object obj,Class clazz,String del_name){
+    public List<Object> delete(Class clazz,String del_name){
         String className = clazz.getSimpleName();
 
-        List<Object> classList = dbData.get(className);
+        List<Object> classlist = dbData.get(className);
 
-        //classList.remove(selectindex);索引
 
-        saveObjectToFile(classList,className,DB_DIR);
 
-        return true;
+        //saveObjectToFile(classList,className,DB_DIR);
+
+        return classlist;
     }
 
 
