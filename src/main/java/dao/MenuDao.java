@@ -4,12 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.Menu;
 import model.Role;
-import model.User;
 import util.DataStore;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,7 +15,7 @@ import static util.DataStore.DB_DIR;
 import static util.DataStore.saveObjectToFile;
 
 public class MenuDao {
-    static String className = User.class.getSimpleName();
+    static String className = Menu.class.getSimpleName();
     static List<Object> classList=  new DataStore().GetMap().get(className);
     public static List<Menu> menuList = convertList(classList);
     private static List<Menu> convertList(List<Object> objectList) {
@@ -56,12 +54,21 @@ public class MenuDao {
         saveObjectToFile(menuList,className,DB_DIR);
         return true;
     }
-    public boolean change(Menu menu){//更改用户
-        DataStore Ds = new DataStore();
+    public static Menu change(String name){//更改用户
+        Iterator<Menu> iterator = menuList.iterator();//迭代器
+        while (iterator.hasNext()) {
 
-        return true;
+            Menu menu = iterator.next();
+
+            if (menu.getName().equals(name)) {
+                return menu;  // 使用迭代器的 remove 方法
+
+            }
+        }
+        return null;
     }
     public static boolean view(String name){//更改用户
+        //System.out.println(menuList);
         Iterator<Menu> iterator = menuList.iterator();//迭代器
         while (iterator.hasNext()) {
 

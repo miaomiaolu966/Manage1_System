@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import dao.MenuDao;
 import dao.RoleDao;
-import model.Role;
 import model.Menu;
 
 import javax.swing.*;
@@ -107,7 +106,7 @@ public class MenuForm extends JFrame {
         try {
             MenuDao.del(filename);
 
-            JOptionPane.showMessageDialog(this,"已删除角色 " + filename,"提示",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,"已删除菜单 " + filename,"提示",JOptionPane.INFORMATION_MESSAGE);
 
         }catch (Exception e){
             JOptionPane.showMessageDialog(this,"删除失败","错误",JOptionPane.INFORMATION_MESSAGE);
@@ -117,9 +116,30 @@ public class MenuForm extends JFrame {
         updateFileList();
     }
     private void changeMenu(){
+        int selectedIndex = fileList.getSelectedIndex();
 
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "请选择一个用户文件", "提示", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String filename =fileListModel.getElementAt(selectedIndex);
+
+        Menu menu = MenuDao.change(filename);
+
+        new ChangeForm(menu);
     }
     private void viewMenu(){
+        int selectedIndex = fileList.getSelectedIndex();
+
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(this, "请选择一个用户文件", "提示", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String filename =fileListModel.getElementAt(selectedIndex);
+        //System.out.println(filename);
+        MenuDao.view(filename);
 
     }
     private void updateFileList(){

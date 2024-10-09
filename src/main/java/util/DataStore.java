@@ -113,7 +113,7 @@ public class DataStore extends Component {
             if (user_obj.getIdentifier().equals(newobj.getIdentifier())) {
                 iterator.remove();
                 classList.add(newobj);
-
+                System.out.println(newobj);
                 saveObjectToFile(classList,className,DB_DIR);
                 return;
             }

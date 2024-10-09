@@ -139,10 +139,10 @@ public class UserForm extends JFrame {
         String filename =fileListModel.getElementAt(selectedIndex);
 
         User user =UserDao.change(filename);
-
+        //System.out.println(user);
         new ChangeForm(user);
         
-        System.out.println("修改用户被点击");
+        //System.out.println("修改用户被点击");
     }
 
     private void updateFileList(){
